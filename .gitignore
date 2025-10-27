@@ -1,5 +1,9 @@
-# Byte-compiled / optimized / DLL files
+# Ignora archivos de caché de Python
 __pycache__/
+*.py[cod]
+*.pyo
+
+# Byte-compiled / optimized / DLL files
 *.py[codz]
 *$py.class
 

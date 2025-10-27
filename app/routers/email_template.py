@@ -4,27 +4,27 @@ from .. import models, schemas, database
 
 router = APIRouter(prefix="/email-templates", tags=["Email Templates"])
 
-@router.post("/", response_model=schemas.EmailTemplateBase)
-def create_template(template: schemas.EmailTemplate, db: Session = Depends(database.get_db)):
+@router.post("/")
+def create_template(template: schemas.EmailTemplateBase, db: Session = Depends(database.get_db)):
     new_template = models.EmailTemplate(**template.dict())
     db.add(new_template)
     db.commit()
     db.refresh(new_template)
     return new_template
 
-@router.get("/", response_model=list[schemas.EmailTemplateBase])
+@router.get("/")
 def get_templates(db: Session = Depends(database.get_db)):
     return db.query(models.EmailTemplate).all()
 
-@router.get("/{id}", response_model=schemas.EmailTemplateBase)
+@router.get("/{id}")
 def get_template(id: int, db: Session = Depends(database.get_db)):
     template = db.query(models.EmailTemplate).filter(models.EmailTemplate.Id == id).first()
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
     return template
 
-@router.put("/{id}", response_model=schemas.EmailTemplateBase)
-def update_template(id: int, updated: schemas.EmailTemplate, db: Session = Depends(database.get_db)):
+@router.put("/{id}")
+def update_template(id: int, updated: schemas.EmailTemplateBase, db: Session = Depends(database.get_db)):
     template = db.query(models.EmailTemplate).filter(models.EmailTemplate.Id == id).first()
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
