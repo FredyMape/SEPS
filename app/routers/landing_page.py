@@ -1,24 +1,56 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from .. import models, database, schemas
 from datetime import datetime
+from pathlib import Path
 import app.Utils.fileUtil as fileUtil
 
-FILE_PATH = "c:/Program Files/SEPS/"
+FILE_PATH = f"{Path(__file__).resolve().parent.parent.parent}/assets/templates/"
 
 router = APIRouter(prefix="/landing-pages", tags=["Landing Pages"])
 
 @router.post("/")
 def create_page(template: schemas.LandingPageBase, db: Session = Depends(database.get_db)):
-    fileName = f"{template.Name}{datetime.now().strftime("%Y%m%d%H%M%S")}.html"
-    
-    fileUtil.guardar_archivo(FILE_PATH + fileName, template.HtmlContent)
-    template.HtmlContent = fileName
-    page = models.LandingPage(**template.dict())
-    db.add(page)
-    db.commit()
-    db.refresh(page)
-    return page
+    try:
+        fileName = f"{template.Name.replace(" ", "")}_{datetime.now().strftime("%Y%m%d%H%M%S")}.html"
+        template.HtmlContent = fileName
+
+        page = models.LandingPage(**template.dict())
+        db.add(page)
+        db.commit()
+        db.refresh(page)
+
+        fileUtil.guardar_archivo(FILE_PATH + fileName, template.HtmlContent)
+        return page
+
+    except IntegrityError as e:
+            db.rollback()
+
+            if "llave duplicada" in str(e.orig):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Ya existe un registro con el mismo valor único ({e.orig})"
+                )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Error de integridad en la base de datos."
+                )
+
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error en la base de datos: {str(e)}"
+        )
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error inesperado: {str(e)}"
+        )
 
 @router.get("/")
 def get_pages(db: Session = Depends(database.get_db)):
