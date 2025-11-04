@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional
  
@@ -56,14 +56,18 @@ class SmtpProfileBase(BaseModel):
 class SmtpProfileCreate(SmtpProfileBase):
     pass
  
-class SmtpProfileOut(SmtpProfileBase):
+class SmtpProfileOut(BaseModel):
     Id: int
+    ProfileName: str
+    SmtpFrom: str
+    Host: str
+    Username: str
+    Port: int
+    UseTls: bool
     CreatedAt: datetime
- 
-    class Config:
-        orm_mode = True
- 
- 
+
+    model_config = ConfigDict(from_attributes=True)
+  
 # ============================================================
 # 👥 Groups
 # ============================================================

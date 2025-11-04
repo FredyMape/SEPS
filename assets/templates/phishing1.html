@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualización de Credenciales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .logo {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .content {
+            padding: 40px 30px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .content p {
+            margin-bottom: 20px;
+        }
+        
+        .alert-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+        
+        .alert-box p {
+            margin: 0;
+            color: #856404;
+            font-size: 14px;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 35px 0;
+        }
+        
+        .update-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .update-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+        }
+        
+        .info-list {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 25px 0;
+        }
+        
+        .info-list ul {
+            margin-left: 20px;
+        }
+        
+        .info-list li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+        }
+        
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #e9ecef;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">🔐</div>
+            <h1>Actualización de Credenciales</h1>
+            <p>Sistema de Seguridad Corporativo</p>
+        </div>
+        
+        <div class="content">
+            <p><strong>Estimado/a Usuario/a,</strong></p>
+            
+            <p>Como parte de nuestras políticas de seguridad y para garantizar la protección de su información, es necesario que actualice sus credenciales de acceso al sistema corporativo.</p>
+            
+            <div class="alert-box">
+                <p><strong>⚠️ Acción requerida:</strong> Sus credenciales actuales expirarán en <strong>7 días</strong>. Por favor, actualícelas lo antes posible para evitar interrupciones en el acceso.</p>
+            </div>
+            
+            <p>Para proceder con la actualización, haga clic en el siguiente botón:</p>
+            
+            <div class="button-container">
+                <a href="#" class="update-button">Actualizar Credenciales</a>
+            </div>
+            
+            <div class="info-list">
+                <p><strong>Requisitos para la nueva contraseña:</strong></p>
+                <ul>
+                    <li>Mínimo 12 caracteres</li>
+                    <li>Al menos una letra mayúscula y una minúscula</li>
+                    <li>Al menos un número y un carácter especial</li>
+                    <li>No debe coincidir con las últimas 5 contraseñas utilizadas</li>
+                </ul>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <p><strong>¿Necesita ayuda?</strong><br>
+            Si tiene alguna pregunta o problema al actualizar sus credenciales, por favor contacte al equipo de soporte técnico.</p>
+            
+            <p style="font-size: 14px; color: #888; margin-top: 30px;">
+                <strong>Nota de seguridad:</strong> Este correo ha sido enviado desde una cuenta oficial. Nunca comparta sus credenciales con terceros y verifique siempre la URL antes de ingresar información sensible.
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Departamento de TI</strong></p>
+            <p>Email: <a href="mailto:soporte@empresa.com">soporte@empresa.com</a> | Tel: +57 (1) 234-5678</p>
+            <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                © 2025 Tu Empresa. Todos los derechos reservados.<br>
+                Este es un correo automático, por favor no responder directamente.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
