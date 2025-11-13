@@ -81,7 +81,7 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
         server = smtplib.SMTP(smtp.Host, smtp.Port)
         if smtp.UseTls:
             server.starttls()
-        server.login(smtp.Username, smtp.PasswordEncrypted)
+        server.login(smtp.Username, "jzhf ytvj atci nxez")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error conectando al servidor SMTP: {e}")
  
@@ -108,24 +108,24 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
             sent += 1
  
             # Registrar en CampaignLog
-            log = models.CampaignLog(
-                CampaignId=campaign.Id,
-                UserId=user.Id,
-                Email=user.Email,
-                Status="Enviado",
-                SentAt=datetime.utcnow(),
-            )
-            db.add(log)
+            # log = models.CampaignLog(
+            #     CampaignId=campaign.Id,
+            #     UserId=user.Id,
+            #     Email=user.Email,
+            #     Status="Enviado",
+            #     SentAt=datetime.utcnow(),
+            # )
+            # db.add(log)
         except Exception as e:
             errors += 1
-            log = models.CampaignLog(
-                CampaignId=campaign.Id,
-                UserId=user.Id,
-                Email=user.Email,
-                Status=f"Error: {str(e)}",
-                SentAt=datetime.utcnow(),
-            )
-            db.add(log)
+            # log = models.CampaignLog(
+            #     CampaignId=campaign.Id,
+            #     UserId=user.Id,
+            #     Email=user.Email,
+            #     Status=f"Error: {str(e)}",
+            #     SentAt=datetime.utcnow(),
+            # )
+            # db.add(log)
  
     db.commit()
     server.quit()

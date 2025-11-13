@@ -1,7 +1,9 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from .routers import email_template, campaign, landing_page, smtp_profile, users, group, group_users
 
 app = FastAPI(title="Campaign Management API")
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 app.include_router(email_template.router)
 app.include_router(campaign.router)

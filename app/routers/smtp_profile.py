@@ -5,9 +5,9 @@ from .. import models,schemas, database
 
 router = APIRouter(prefix="/smtp-profiles", tags=["SMTP Profiles"])
 
-@router.post("/", response_model=schemas.SmtpProfileBase)
-def create_profile(data: schemas.SmtpProfileBase, db: Session = Depends(database.get_db)):
-    profile = models.SmtpProfile(**data.dict())
+@router.post("/", response_model=schemas.SmtpProfileOut)
+def create_profile(data: schemas.SmtpProfileCreate, db: Session = Depends(database.get_db)):
+    profile = models.SmtpProfile(**data.model_dump())
     db.add(profile)
     db.commit()
     db.refresh(profile)
