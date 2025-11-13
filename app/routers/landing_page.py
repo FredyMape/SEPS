@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 import app.Utils.fileUtil as fileUtil
  
-FILE_PATH = f"{Path(__file__).resolve().parent.parent.parent}/assets/templates/"
+FILE_PATH = f"{Path(__file__).resolve().parent.parent.parent}\\assets\\templates\\"
  
 router = APIRouter(prefix="/landing-pages", tags=["Landing Pages"])
  
@@ -55,8 +55,12 @@ def create_page(template: schemas.LandingPageBase, db: Session = Depends(databas
  
 @router.get("/")
 def get_pages(db: Session = Depends(database.get_db)):
-    return db.query(models.LandingPage).all()
- 
+    landingPague = db.query(models.LandingPage).all()
+
+    for page in landingPague:
+        page.HtmlContent = fileUtil.leer_archivo(FILE_PATH + page.HtmlContent)
+    return landingPague
+
 @router.get("/{id}")
 def get_page(id: int, db: Session = Depends(database.get_db)):
     page = db.query(models.LandingPage).filter(models.LandingPage.Id == id).first()
