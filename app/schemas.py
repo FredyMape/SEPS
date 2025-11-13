@@ -161,3 +161,9 @@ class CampaignRecipientOut(BaseModel):
  
     class Config:
         orm_mode = True
+
+class LaunchCampaignResult(BaseModel):
+    total_recipients: int
+    emails_sent: int
+    errors: int
+    message: str

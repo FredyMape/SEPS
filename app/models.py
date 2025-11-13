@@ -81,3 +81,12 @@ class vw_CampaignRecipients(Base):
     CampaignName = Column(String)
     LaunchDate = Column(DateTime)
     __mapper_args__ = {"primary_key": [CampaignId, UserId]}
+
+class CampaignLog(Base):
+    __tablename__ = "CampaignLog"
+    Id = Column(Integer, primary_key=True, index=True)
+    CampaignId = Column(Integer, ForeignKey("Campaign.Id"))
+    UserId = Column(Integer, ForeignKey("Users.Id"))
+    Email = Column(String)
+    Status = Column(String)
+    SentAt = Column(DateTime, default=datetime.utcnow)
