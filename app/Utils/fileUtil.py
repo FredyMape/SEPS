@@ -12,6 +12,6 @@ def leer_archivo(ruta_archivo: Union[str, Path], encoding: str = "utf-8", defaul
     if not ruta.exists():
         if default_on_missing is not None:
             return default_on_missing
-        return "" #FileNotFoundError(f"Archivo no encontrado: {ruta}")
+        return "No content - File not found" #FileNotFoundError(f"Archivo no encontrado: {ruta}")
     result = ruta.read_text(encoding=encoding)
     return result
