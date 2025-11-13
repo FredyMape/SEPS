@@ -13,6 +13,7 @@ router = APIRouter(prefix="/landing-pages", tags=["Landing Pages"])
 @router.post("/")
 def create_page(template: schemas.LandingPageBase, db: Session = Depends(database.get_db)):
     try:
+        content = template.HtmlContent
         fileName = f"{template.Name.replace(" ", "")}_{datetime.now().strftime("%Y%m%d%H%M%S")}.html"
         template.HtmlContent = fileName
 
@@ -21,7 +22,7 @@ def create_page(template: schemas.LandingPageBase, db: Session = Depends(databas
         db.commit()
         db.refresh(page)
 
-        fileUtil.guardar_archivo(FILE_PATH + fileName, template.HtmlContent)
+        fileUtil.guardar_archivo(FILE_PATH + fileName, content)
         return page
 
     except IntegrityError as e:
