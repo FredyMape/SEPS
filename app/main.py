@@ -1,10 +1,20 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from .routers import email_template, campaign, landing_page, smtp_profile, users, group, group_users
-
+from fastapi.middleware.cors import CORSMiddleware
+ 
 app = FastAPI(title="Campaign Management API")
+ 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # O sustituye por una lista de dominios permitidos ["https://tu-front.com"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+ 
 app.mount("/assets", StaticFiles(directory="assets/templates"), name="assets")
-
+ 
 app.include_router(email_template.router)
 app.include_router(campaign.router)
 app.include_router(landing_page.router)

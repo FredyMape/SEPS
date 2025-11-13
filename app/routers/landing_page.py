@@ -5,29 +5,29 @@ from .. import models, database, schemas
 from datetime import datetime
 from pathlib import Path
 import app.Utils.fileUtil as fileUtil
-
+ 
 FILE_PATH = f"{Path(__file__).resolve().parent.parent.parent}/assets/templates/"
-
+ 
 router = APIRouter(prefix="/landing-pages", tags=["Landing Pages"])
-
+ 
 @router.post("/")
 def create_page(template: schemas.LandingPageBase, db: Session = Depends(database.get_db)):
     try:
         content = template.HtmlContent
         fileName = f"{template.Name.replace(" ", "")}_{datetime.now().strftime("%Y%m%d%H%M%S")}.html"
         template.HtmlContent = fileName
-
+ 
         page = models.LandingPage(**template.dict())
         db.add(page)
         db.commit()
         db.refresh(page)
-
+ 
         fileUtil.guardar_archivo(FILE_PATH + fileName, content)
         return page
-
+ 
     except IntegrityError as e:
             db.rollback()
-
+ 
             if "llave duplicada" in str(e.orig):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -38,32 +38,32 @@ def create_page(template: schemas.LandingPageBase, db: Session = Depends(databas
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Error de integridad en la base de datos."
                 )
-
+ 
     except SQLAlchemyError as e:
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error en la base de datos: {str(e)}"
         )
-
+ 
     except Exception as e:
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error inesperado: {str(e)}"
         )
-
+ 
 @router.get("/")
 def get_pages(db: Session = Depends(database.get_db)):
     return db.query(models.LandingPage).all()
-
+ 
 @router.get("/{id}")
 def get_page(id: int, db: Session = Depends(database.get_db)):
     page = db.query(models.LandingPage).filter(models.LandingPage.Id == id).first()
     if not page:
         raise HTTPException(status_code=404, detail="Landing Page not found")
     return page
-
+ 
 @router.put("/{id}")
 def update_page(id: int, data: schemas.LandingPageBase, db: Session = Depends(database.get_db)):
     page = db.query(models.LandingPage).filter(models.LandingPage.Id == id).first()
@@ -74,7 +74,7 @@ def update_page(id: int, data: schemas.LandingPageBase, db: Session = Depends(da
     db.commit()
     db.refresh(page)
     return page
-
+ 
 @router.delete("/{id}")
 def delete_page(id: int, db: Session = Depends(database.get_db)):
     page = db.query(models.LandingPage).filter(models.LandingPage.Id == id).first()
