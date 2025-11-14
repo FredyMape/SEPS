@@ -85,6 +85,7 @@ def update_page(id: int, template: schemas.LandingPageBase, db: Session = Depend
         db.refresh(page)
 
         fileUtil.guardar_archivo(FILE_PATH + fileName, content)
+        page.HtmlContent = fileUtil.leer_archivo(FILE_PATH + fileName)
         return page
     
     except IntegrityError as e:
