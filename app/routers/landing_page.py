@@ -69,14 +69,53 @@ def get_page(id: int, db: Session = Depends(database.get_db)):
     return page
  
 @router.put("/{id}")
-def update_page(id: int, data: schemas.LandingPageBase, db: Session = Depends(database.get_db)):
+def update_page(id: int, template: schemas.LandingPageBase, db: Session = Depends(database.get_db)):
+    
     page = db.query(models.LandingPage).filter(models.LandingPage.Id == id).first()
-    if not page:
-        raise HTTPException(status_code=404, detail="Landing Page not found")
-    for k, v in data.dict().items():
-        setattr(page, k, v)
-    db.commit()
-    db.refresh(page)
+    try:
+        content = template.HtmlContent
+        fileName = page.HtmlContent
+ 
+        if not page:
+            raise HTTPException(status_code=404, detail="Landing Page not found")
+        for k, v in template.dict().items():
+            setattr(page, k, v)
+        db.commit()
+        db.refresh(page)
+
+        fileUtil.guardar_archivo(FILE_PATH + fileName, content)
+        return page
+    
+    except IntegrityError as e:
+        db.rollback()
+
+        if "llave duplicada" in str(e.orig):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe un registro con el mismo valor único ({e.orig})"
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Error de integridad en la base de datos."
+                )
+ 
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error en la base de datos: {str(e)}"
+        )
+ 
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error inesperado: {str(e)}"
+        )
+
+    page = db.query(models.LandingPage).filter(models.LandingPage.Id == id).first()
+    
     return page
  
 @router.delete("/{id}")
