@@ -13,7 +13,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
  
-app.mount("/assets", StaticFiles(directory="assets/templates"), name="assets")
+app.mount("/pages", StaticFiles(directory="assets/templates"), name="assets")
  
 app.include_router(email_template.router)
 app.include_router(campaign.router)

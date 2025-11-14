@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
+from app.Utils.templatesUtils import reemplazar_parametros
 from .. import models, schemas, database
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime
+from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
 
@@ -64,6 +66,11 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
     if not smtp:
         raise HTTPException(status_code=404, detail="Perfil SMTP no encontrado")
  
+    # Obtener landing page
+    landing_page = db.query(models.LandingPage).filter(models.LandingPage.Id == campaign.LandingPageId).first()
+    if not landing_page:
+        raise HTTPException(status_code=404, detail="Perfil SMTP no encontrado")
+    
     # 4️⃣ Obtener usuarios del grupo
     group_users = (
         db.query(models.GroupUsers)
@@ -93,14 +100,26 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
         user = db.query(models.Users).filter(models.Users.Id == gu.UserId).first()
         if not user or not user.Email:
             continue
- 
+        
+        fecha_actual = datetime.now() + timedelta(hours=5)
+
+        parametros = {
+            "NOMBRE_USUARIO": (user.FirstName or "") + " " + (user.MiddleName or ""),
+            "FECHA_EXPIRACION": fecha_actual.strftime("%d/%m/%Y"),
+            "URL_HREF": "http://44.216.31.216:80/assets/templates/" + landing_page.HtmlContent
+        }        
+
+
+        email_content = template.Content
+        email_content = reemplazar_parametros(email_content, parametros)
+
         msg = MIMEMultipart("alternative")
         msg["Subject"] = template.Subject
         msg["From"] = template.EnvelopeSender or smtp.SmtpFrom
         msg["To"] = user.Email
  
         # Cuerpo del correo
-        body = MIMEText(template.Content, "html")
+        body = MIMEText(email_content, "html")
         msg.attach(body)
  
         try:
