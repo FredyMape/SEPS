@@ -18,6 +18,7 @@ class LandingPage(Base):
     Name = Column(String)
     HtmlContent = Column(String)
     RedirectTo = Column(String)
+    Description = Column(String)
     CreatedAt = Column(DateTime, default=datetime.utcnow)
 
 class SmtpProfile(Base):

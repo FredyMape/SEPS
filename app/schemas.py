@@ -28,6 +28,7 @@ class EmailTemplateOut(EmailTemplateBase):
 class LandingPageBase(BaseModel):
     Name: str
     HtmlContent: str
+    Description: str
     RedirectTo: Optional[str] = None
  
 class LandingPageCreate(LandingPageBase):
