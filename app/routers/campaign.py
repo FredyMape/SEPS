@@ -106,7 +106,7 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
         parametros = {
             "NOMBRE_USUARIO": (user.FirstName or "") + " " + (user.MiddleName or ""),
             "FECHA_EXPIRACION": fecha_actual.strftime("%d/%m/%Y"),
-            "URL_HREF": "http://44.216.31.216:80/assets/templates/" + landing_page.HtmlContent
+            "URL_HREF": "http://44.216.31.216:80/pages/" + landing_page.HtmlContent
         }        
 
 
