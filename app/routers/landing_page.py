@@ -76,7 +76,7 @@ def update_page(id: int, template: schemas.LandingPageBase, db: Session = Depend
         content = template.HtmlContent
         fileName = page.HtmlContent
         template.HtmlContent = fileName
-        
+
         if not page:
             raise HTTPException(status_code=404, detail="Landing Page not found")
         for k, v in template.dict().items():
@@ -115,9 +115,6 @@ def update_page(id: int, template: schemas.LandingPageBase, db: Session = Depend
             detail=f"Error inesperado: {str(e)}"
         )
 
-    page = db.query(models.LandingPage).filter(models.LandingPage.Id == id).first()
-    
-    return page
  
 @router.delete("/{id}")
 def delete_page(id: int, db: Session = Depends(database.get_db)):
