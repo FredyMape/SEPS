@@ -37,7 +37,7 @@ def open_campain_file(token: str, db: Session = Depends(database.get_db)):
     
     data = json.loads(plain)
     
-    item = db.query(models.Metrics).filter(models.Metrics.IdLaunch == data.get("launch_id") and models.Metrics.IdUser == data.get("user_id")).first()
+    item = db.query(models.Metrics).filter(models.Metrics.IdLaunch == data.get("launch_id"), models.Metrics.IdUser == data.get("user_id")).first()
     
     if not item:
         raise HTTPException(status_code=404, detail="Metric not found")
