@@ -4,11 +4,15 @@ from sqlalchemy.orm import Session
 from app.Utils.templatesUtils import reemplazar_parametros
 from .. import models, schemas, database
 import smtplib
+import json
+import urllib.parse
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
+from app.Utils.AesEncript import encrypt_aes256
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
+password = "f2G9vQ8kzS1aYx7RnbTQeZ_3wLk9u1XhV0pOaC6Bq9I"
 
 @router.post("/")
 def create_campaign(template: schemas.CampaignBase, db: Session = Depends(database.get_db)):
@@ -51,6 +55,8 @@ def delete_campaign(id: int, db: Session = Depends(database.get_db)):
 
 @router.post("/launch/{id}")
 def launch_campaign(id: int, db: Session = Depends(database.get_db)):
+    
+    
     # 1️⃣ Obtener campaña
     campaign = db.query(models.Campaign).filter(models.Campaign.Id == id).first()
     if not campaign:
@@ -103,11 +109,18 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
         
         fecha_actual = datetime.now() + timedelta(hours=5)
 
+        data = {
+            "user_id": user.Id,
+            "url": "http://44.216.31.216:80/pages/" + landing_page.HtmlContent,
+        }
+
+        token_data = encrypt_aes256(json.dumps(data, ensure_ascii=False, indent=2), password)
+
         parametros = {
             "NOMBRE_USUARIO": (user.FirstName or "") + " " + (user.MiddleName or ""),
             "FECHA_EXPIRACION": fecha_actual.strftime("%d/%m/%Y"),
-            "URL_HREF": "http://44.216.31.216:80/pages/" + landing_page.HtmlContent
-        }        
+            "URL_HREF": "http://44.216.31.216:80/seps/" +  urllib.parse.quote(token_data, safe='')
+        }
 
 
         email_content = template.Content

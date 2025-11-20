@@ -168,3 +168,44 @@ class LaunchCampaignResult(BaseModel):
     emails_sent: int
     errors: int
     message: str
+
+    
+# ============================================================
+# 🚀 LaunchCampaign
+# ============================================================
+class LaunchCampaignBase(BaseModel):
+    IdCampaign: int
+    Date: Optional[datetime] = None
+    TotalRecipients: Optional[int] = 0
+    EmailsSent: Optional[int] = 0
+
+class LaunchCampaignCreate(LaunchCampaignBase):
+    pass
+
+class LaunchCampaignOut(LaunchCampaignBase):
+    Id: int
+
+    class Config:
+        orm_mode = True
+
+
+# ============================================================
+# 📊 Metrics
+# ============================================================
+class MetricsBase(BaseModel):
+    IdLaunch: int
+    IdUser: int
+    SendMail: bool = False
+    OpenMail: bool = False
+    OpenLandingPage: bool = False
+    SendData: bool = False
+    TrainingCompleted: bool = False
+
+class MetricsCreate(MetricsBase):
+    pass
+
+class MetricsOut(MetricsBase):
+    Id: int
+
+    class Config:
+        orm_mode = True

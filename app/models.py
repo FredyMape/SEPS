@@ -91,3 +91,29 @@ class CampaignLog(Base):
     Email = Column(String)
     Status = Column(String)
     SentAt = Column(DateTime, default=datetime.utcnow)
+
+
+class LaunchCampaign(Base):
+    __tablename__ = "LaunchCampaign"
+    __table_args__ = {"schema": "mkt"}
+    Id = Column(Integer, primary_key=True, index=True)
+    IdCampaign = Column(Integer, ForeignKey("Campaign.Id"), nullable=False)
+    Date = Column(DateTime, default=datetime.utcnow)
+    TotalRecipients = Column(Integer, default=0)
+    EmailsSent = Column(Integer, default=0)
+    campaign = relationship("Campaign", primaryjoin="LaunchCampaign.IdCampaign==Campaign.Id", backref="launches")
+
+
+class Metrics(Base):
+    __tablename__ = "Metrics"
+    __table_args__ = {"schema": "mkt"}
+    Id = Column(Integer, primary_key=True, index=True)
+    IdLaunch = Column(Integer, ForeignKey("LaunchCampaign.Id"), nullable=False)
+    IdUser = Column(Integer, ForeignKey("Users.Id"), nullable=False)
+    SendMail = Column(Boolean, default=False)
+    OpenMail = Column(Boolean, default=False)
+    OpenLandingPage = Column(Boolean, default=False)
+    SendData = Column(Boolean, default=False)
+    TrainingCompleted = Column(Boolean, default=False)
+    launch = relationship("LaunchCampaign", primaryjoin="Metrics.IdLaunch==LaunchCampaign.Id", backref="metrics")
+    user = relationship("Users", primaryjoin="Metrics.IdUser==Users.Id", backref="metrics")

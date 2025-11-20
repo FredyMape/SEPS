@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+
+from app.routers import launch_campaigns, metrics
 from .routers import email_template, campaign, landing_page, smtp_profile, users, group, group_users
 from fastapi.middleware.cors import CORSMiddleware
  
@@ -22,3 +24,5 @@ app.include_router(smtp_profile.router)
 app.include_router(users.router)
 app.include_router(group.router)
 app.include_router(group_users.router)
+app.include_router(metrics.router)
+app.include_router(launch_campaigns.router)
