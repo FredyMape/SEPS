@@ -102,6 +102,18 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
     sent = 0
     errors = 0
  
+    launch = schemas.LaunchCampaignBase(
+        IdCampaign = campaign.Id,
+        Date = datetime.utcnow(),
+        TotalRecipients = 0,
+        EmailsSent = 0
+    )
+
+    launch_campain = models.LaunchCampaign(**launch.dict())
+    db.add(launch_campain)
+    db.commit()
+    db.refresh(launch_campain)
+
     for gu in group_users:
         user = db.query(models.Users).filter(models.Users.Id == gu.UserId).first()
         if not user or not user.Email:
@@ -112,6 +124,8 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
         data = {
             "user_id": user.Id,
             "url": "http://44.216.31.216:80/pages/" + landing_page.HtmlContent,
+            "launch_id": launch_campain.Id,
+            "metric": "open_landing_page",
         }
 
         token_data = encrypt_aes256(json.dumps(data, ensure_ascii=False, indent=2), password)
@@ -135,10 +149,21 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
         body = MIMEText(email_content, "html")
         msg.attach(body)
  
+        metrics_object = schemas.MetricsCreate(
+            IdLaunch = launch_campain.Id,
+            IdUser = user.Id,
+            SendMail = True
+        )
+
         try:
             server.sendmail(msg["From"], msg["To"], msg.as_string())
             sent += 1
  
+            metrics = models.Metrics(**metrics_object.dict())
+            db.add(metrics)
+            db.commit()
+            db.refresh(metrics)
+
             # Registrar en CampaignLog
             # log = models.CampaignLog(
             #     CampaignId=campaign.Id,
@@ -150,6 +175,13 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
             # db.add(log)
         except Exception as e:
             errors += 1
+
+            metrics_object.SendMail = False
+            metrics = models.Metrics(**metrics_object.dict())
+            db.add(metrics)
+            db.commit()
+            db.refresh(metrics)
+
             # log = models.CampaignLog(
             #     CampaignId=campaign.Id,
             #     UserId=user.Id,
@@ -166,9 +198,20 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
     campaign.Status = "Enviada"
     db.commit()
  
+    # 7 Actualizar metricas de campaña
+    launch.TotalRecipients = total
+    launch.EmailsSent = sent
+
+    for k, v in launch.dict().items():
+        setattr(launch_campain, k, v)
+    db.commit()
+    db.refresh(launch_campain)
+
+    
+
     return schemas.LaunchCampaignResult(
-        total_recipients=total,
-        emails_sent=sent,
-        errors=errors,
-        message=f"Campaña {campaign.CampaignName} lanzada con éxito" if sent > 0 else "No se enviaron correos"
+        total_recipients = total,
+        emails_sent = sent,
+        errors = errors,
+        message = f"Campaña {campaign.CampaignName} lanzada con éxito" if sent > 0 else "No se enviaron correos"
     )

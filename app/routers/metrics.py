@@ -37,12 +37,43 @@ def open_campain_file(token: str, db: Session = Depends(database.get_db)):
     
     data = json.loads(plain)
     
+    item = db.query(models.Metrics).filter(models.Metrics.IdLaunch == data.get("launch_id") and models.Metrics.IdUser == data.get("user_id")).first()
+    
+    if not item:
+        raise HTTPException(status_code=404, detail="Metric not found")
+    
+    metrics_object = schemas.MetricsCreate(
+        IdLaunch = data.get("launch_id"),
+        IdUser = data.get("user_id"),
+        SendMail= item.SendMail,
+        OpenMail = item.OpenMail,
+        OpenLandingPage = item.OpenLandingPage,
+        SendData = item.SendData,
+        TrainingCompleted = item.TrainingCompleted
+    )
+
+    if data.get("metric") == "open_landing_page":   
+        metrics_object.OpenMail = True
+        metrics_object.OpenLandingPage = True
+
+    if data.get("metric") == "send_data":   
+        metrics_object.SendData = True 
+
+    if data.get("metric") == "training_completed":
+        metrics_object.SendData = True 
+    
+    
+    for k, v in metrics_object.dict().items():
+        setattr(item, k, v)
+    db.commit()
+    db.refresh(item)
+
     url = data.get("url")
     if not url:
         raise HTTPException(status_code=400, detail="URL no encontrada en token")
 
     # redirección (302)
-    return RedirectResponse(url=url, status_code=302)
+    return RedirectResponse(url=url + '?p=' + token, status_code=302)
 
 @router.put("/{id}")
 def update_metric(id: int, updated: schemas.MetricsBase, db: Session = Depends(database.get_db)):
