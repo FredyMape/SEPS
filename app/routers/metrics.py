@@ -52,15 +52,35 @@ def open_campain_file(token: str, db: Session = Depends(database.get_db)):
         TrainingCompleted = item.TrainingCompleted
     )
 
+    token_data = token
+
     if data.get("metric") == "open_landing_page":   
         metrics_object.OpenMail = True
         metrics_object.OpenLandingPage = True
 
+        new_data = {
+            "user_id":  data.get("user_id"),
+            "url": "http://44.216.31.216:80/pages/Training.html",
+            "launch_id": data.get("launch_id"),
+            "metric": "send_data",
+        }
+
+        token_data = encrypt_aes256(json.dumps(new_data, ensure_ascii=False, indent=2), password)
+
     if data.get("metric") == "send_data":   
         metrics_object.SendData = True 
 
+        new_data = {
+            "user_id":  data.get("user_id"),
+            "url": "http://44.216.31.216:80/pages/Training.html",
+            "launch_id": data.get("launch_id"),
+            "metric": "training_completed",
+        }
+
+        token_data = encrypt_aes256(json.dumps(new_data, ensure_ascii=False, indent=2), password)
+
     if data.get("metric") == "training_completed":
-        metrics_object.SendData = True 
+        metrics_object.TrainingCompleted = True 
     
     
     for k, v in metrics_object.dict().items():
@@ -73,7 +93,7 @@ def open_campain_file(token: str, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=400, detail="URL no encontrada en token")
 
     # redirección (302)
-    return RedirectResponse(url=url + '?p=' + token, status_code=302)
+    return RedirectResponse(url=url + '?p=' + urllib.parse.quote(token_data, safe=''), status_code=302)
 
 @router.put("/{id}")
 def update_metric(id: int, updated: schemas.MetricsBase, db: Session = Depends(database.get_db)):
