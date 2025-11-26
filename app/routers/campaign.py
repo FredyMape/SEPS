@@ -142,7 +142,11 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
 
         msg = MIMEMultipart("alternative")
         msg["Subject"] = template.Subject
-        msg["From"] = template.EnvelopeSender or smtp.SmtpFrom
+
+        sender_name = template.EnvelopeSender
+        sender_email = smtp.SmtpFrom
+
+        msg["From"] = f"{sender_name} <{sender_email}>"
         msg["To"] = user.Email
  
         # Cuerpo del correo
