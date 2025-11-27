@@ -5,7 +5,12 @@ from app.routers import launch_campaigns, metrics
 from .routers import email_template, campaign, landing_page, smtp_profile, users, group, group_users
 from fastapi.middleware.cors import CORSMiddleware
  
-app = FastAPI(title="Campaign Management API")
+app = FastAPI(
+    title="Campaign Management API",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None
+)
  
 app.add_middleware(
     CORSMiddleware,

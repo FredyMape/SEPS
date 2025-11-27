@@ -60,7 +60,7 @@ def open_campain_file(token: str, db: Session = Depends(database.get_db)):
 
         new_data = {
             "user_id":  data.get("user_id"),
-            "url": "http://44.216.31.216:8080/",
+            "url": "https://training.empleados.com.co/",
             "launch_id": data.get("launch_id"),
             "metric": "send_data",
         }
@@ -72,7 +72,7 @@ def open_campain_file(token: str, db: Session = Depends(database.get_db)):
 
         new_data = {
             "user_id":  data.get("user_id"),
-            "url": "http://44.216.31.216:8080/",
+            "url": "https://training.empleados.com.co/",
             "launch_id": data.get("launch_id"),
             "metric": "training_completed",
         }

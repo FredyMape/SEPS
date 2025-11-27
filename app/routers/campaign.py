@@ -124,7 +124,7 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
 
         data = {
             "user_id": user.Id,
-            "url": "http://44.216.31.216:80/pages/" + landing_page.HtmlContent,
+            "url": "https://"+ landing_page.HtmlContent.lower().split("_", 1)[0]+".empleados.com.co",
             "launch_id": launch_campain.Id,
             "metric": "open_landing_page",
         }
@@ -134,7 +134,7 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
         parametros = {
             "NOMBRE_USUARIO": (user.FirstName or "") + " " + (user.MiddleName or ""),
             "FECHA_EXPIRACION": fecha_actual.strftime("%d/%m/%Y"),
-            "URL_HREF": "http://44.216.31.216:80/seps/" +  urllib.parse.quote(token_data, safe='')
+            "URL_HREF": "https://sofka.empleados.com.co/seps/" +  urllib.parse.quote(token_data, safe='')
         }
 
 
