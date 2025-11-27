@@ -11,16 +11,17 @@ app = FastAPI(
     # redoc_url=None,
     # openapi_url=None
 )
- 
+origins = [
+    "https://training.empleados.com.co",
+    "https://sofka.empleados.com.co",
+    "https://wesofka.empleados.com.co",
+    "https://drive.empleados.com.co",
+    "https://profilehub.empleados.com.co"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://training.empleados.com.co/",
-        "https://sofka.empleados.com.co/",
-        "https://wesofka.empleados.com.co/",
-        "https://drive.empleados.com.co",
-        "https://profilehub.empleados.com.co"
-    ],  # O sustituye por una lista de dominios permitidos ["https://tu-front.com"]
+    allow_origins=origins,  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
