@@ -6,6 +6,7 @@ from .. import models, schemas, database
 import smtplib
 import json
 import urllib.parse
+import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
@@ -167,6 +168,8 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
             db.add(metrics)
             db.commit()
             db.refresh(metrics)
+            
+            time.sleep(3)
 
             # Registrar en CampaignLog
             # log = models.CampaignLog(
@@ -185,6 +188,8 @@ def launch_campaign(id: int, db: Session = Depends(database.get_db)):
             db.add(metrics)
             db.commit()
             db.refresh(metrics)
+
+            time.sleep(3)
 
             # log = models.CampaignLog(
             #     CampaignId=campaign.Id,
